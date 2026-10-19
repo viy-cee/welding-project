@@ -1,0 +1,51 @@
+.header-container{
+  background-color: azure;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.middle-section{
+  display: flex;
+  justify-content: space-between;
+  width: 300px;
+  color: rgb(150, 88, 88);
+}
+.auth-section{
+  display: flex;
+  width: 170px;
+  justify-content: space-between;
+  align-items: center;
+}
+.site-name{
+  font-weight: 1000;
+  font-size: 50px;
+  color: rgb(44, 20, 20);
+  text-decoration: none;
+}
+.name-info{
+  font-size: 20px;
+  font-weight: 500s;
+}
+.contact-link,.home-link,.about-link{
+  font-size: 20px;
+  text-decoration: none;
+  color: rgb(150, 88, 88);
+}
+.contact-link:hover,.home-link:hover,.about-link:hover{
+  cursor: pointer;
+  text-decoration: underline;
+}
+.profile-pic{
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+.login-header{
+  text-decoration: none;
+  font-weight: bold;
+  color: black;
+}

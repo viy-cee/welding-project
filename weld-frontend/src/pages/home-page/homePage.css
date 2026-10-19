@@ -1,0 +1,24 @@
+.item-container {
+  columns: 4 220px;
+  column-gap: 12px;
+  padding: 12px;
+}
+
+.image-box {
+  width: 100%;
+  margin: 0 0 12px;
+  break-inside: avoid;
+}
+
+.item-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+}
+
+@media (max-width: 600px) {
+  .item-container {
+    columns: 2 150px;
+  }
+}
