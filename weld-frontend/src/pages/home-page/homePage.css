@@ -30,6 +30,9 @@
   border-radius: 5px;
   padding: 6px 10px;
   background-color: aquamarine;
+  color: black;
+  font: inherit;
+  text-decoration: none;
   opacity: 0;
   visibility: hidden;
   transition: opacity 150ms ease;
@@ -40,3 +43,10 @@
   opacity: 1;
   visibility: visible;
 }
+/* body{
+  background-image: url('../../images/grinder.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+} */

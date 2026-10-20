@@ -48,8 +48,16 @@ export const HomePage = ({ email })=>{
       return(
         <div key={item._id} className='image-box'>
         <img className="item-image" src={item.url} />
-        { role === 'admin' &&
+        { role === 'admin'
+        ?
         <button className="delete">delete</button>
+        :
+        <a
+          className="delete whatsapp-share"
+          href={`https://wa.me/?text=${encodeURIComponent(item.url)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >share</a>
         }
         </div> 
       )
