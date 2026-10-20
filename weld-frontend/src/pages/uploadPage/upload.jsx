@@ -2,63 +2,71 @@ import './upload.css'
 import { useState } from "react"
 import { HeaderComponenet } from "../../components/header/header";
 import axios from 'axios'
-export const FileUpload = ({ username }) => {
+import { NavLink } from 'react-router';
+export const FileUpload = ({ email }) => {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false)
   const [status, setStatus] = useState('')
   const [uploadProgress, setUploadProgress] = useState(0)
   function uplodFile(event) {
-    if (event.target.files) {
-      setFile(event.target.files[0])
-      console.log(file)
-    }
+    setFile(event.target.files?.[0] ?? null)
   }
   async function isUploading() {
-    if (uploading) {
-      setStatus('wait for upload to finish')
-      setTimeout(() => {
-        setStatus('uploading...')
-      }, 700)
+    if (uploading) return
+    if (!file) {
+      setStatus('please select a file first')
       return
     }
+
     setUploadProgress(0)
     setUploading(true)
     setStatus('uploading...')
 
     const formData = new FormData();
-    formData.append('file', file)
+    // The backend route uses multerUploadMiddleware.single('image').
+    formData.append('image', file)
+
+    const token = localStorage.getItem('token')
+    if (!token) {
+      setStatus('please log in before uploading')
+      setUploading(false)
+      return
+    }
 
     try {
-      const response = await axios.post("https://httpbin.org/post", formData, {
+      const response = await axios.post('http://localhost:3000/api/v1/upload', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          Authorization: `Bearer ${token}`
         },
         onUploadProgress: (progressEvent) => {
           const progress = progressEvent.total
-            ? Math.round(progressEvent.loaded * 100) / progressEvent.total
+            ? Math.round((progressEvent.loaded * 100) / progressEvent.total)
             : 0;
           setUploadProgress(progress)
         }
       });
 
       setStatus('success')
-      console.log(response)
+      if(response.data.success){
+
+      }
+      setUploadProgress(100)
 
       setTimeout(() => {
         setStatus('')
       }, 2000)
-
-      setUploading(false)
-      setUploadProgress(100)
     } catch (error) {
-      console.log(error)
+      console.error('File upload failed:', error)
+      setStatus(error.response?.data?.message || 'upload failed')
       setUploadProgress(0)
+    } finally {
+      setUploading(false)
     }
   }
 
   return (
     <>
-      <HeaderComponenet username={username} />
+      <HeaderComponenet email={email} />
       <div className='upload-container'>
         <div className='upload-info'>
           <input className="file-input" type="file" onChange={uplodFile} />

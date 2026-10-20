@@ -3,6 +3,7 @@ import { useNavigate } from "react-router"
 import { HeaderComponenet } from "../../components/header/header"
 import './auth.css'
 import axios from "axios"
+import { Link } from "react-router"
 export const RegisterPage = ({ username }) => {
   const navigate = useNavigate()
   const [errorMessage, setErrorMessage] = useState('')
@@ -68,7 +69,7 @@ export const RegisterPage = ({ username }) => {
               />
             </div>
             {errorMessage && <div role="alert">{errorMessage}</div>}
-            <div>already have an account?<a href="/login">Login</a></div>
+            <div>already have an account?<Link to="/login">Login</Link></div>
             <button className="register-button" type="submit">Register</button>
           </form>
         </div>

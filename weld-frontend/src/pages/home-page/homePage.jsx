@@ -3,76 +3,54 @@ import './homePage.css'
 import { HeaderComponenet } from '../../components/header/header'
 import { useState,useEffect } from 'react'
 import axios from 'axios'
-export const HomePage = ({ username })=>{
-  const [images,setImages] = useState([])
 
-  const getImages = async ()=>{
-    const response = await axios.get('http://localhost:3000/api/v1/images')
-    setImages(response.data.data)
+let cachedImages
+let imagesRequest
+
+const fetchImages = () => {
+  if (cachedImages) return Promise.resolve(cachedImages)
+  if (!imagesRequest) {
+    imagesRequest = axios.get('http://localhost:3000/api/v1/images')
+      .then((response) => {
+        cachedImages = response.data.data
+        return cachedImages
+      })
+      .finally(() => {
+        imagesRequest = undefined
+      })
   }
-   useEffect(()=>{
-    getImages()
-    
-  },[])
+  return imagesRequest
+}
 
-  console.log(images)
+export const HomePage = ({ email })=>{
+  const [images,setImages] = useState(() => cachedImages || [])
 
-  /*const dataAndInfo = [
-    {
-      name:'window',
-      description:'window type a',
-      id:1
-    },
-        {
-      name:'window',
-      image: '/product-images/gate2.jpg',
-      description:'window type a',
-      id:2
-    },
-        {
-      name:'window',
-      image: '/product-images/gate3.jpg',
-      description:'window type a',
-      id:3
-    },
-        {
-      name:'window',
-      image: '/product-images/gate5.jpg',
-      description:'window type a',
-      id:4
-    },
-      {
-      name:'window',
-      image: '/product-images/gate6.jpg',
-      description:'window type a',
-      id:5
-    },
-          {
-      name:'window',
-      image: '/product-images/gate7.jpg',
-      description:'window type a',
-      id:6
-    },
-          {
-      name:'window',
-      image: '/product-images/gate8.jpg',
-      description:'window type a',
-      id:7
-    },
-          {
-      name:'window',
-      image: '/product-images/window1.jpg',
-      description:'window type a',
-      id:8
+  useEffect(() => {
+    let isMounted = true
+    fetchImages()
+      .then((imageList) => {
+        if (isMounted) setImages(imageList)
+      })
+      .catch((error) => {
+        console.error('Failed to load images:', error)
+      })
+
+    return () => {
+      isMounted = false
     }
-  ]*/
+  }, [])
+
+  const role = localStorage.getItem('role')
+
     const PicturesFunc = ()=>{
       return(
     images.map((item)=>{
-      console.log(item)
       return(
         <div key={item._id} className='image-box'>
-        <img className="item-image" src={item.url}/>
+        <img className="item-image" src={item.url} />
+        { role === 'admin' &&
+        <button className="delete">delete</button>
+        }
         </div> 
       )
     })
@@ -80,7 +58,7 @@ export const HomePage = ({ username })=>{
   }
   return(
     <>
-    <HeaderComponenet username={username} />
+    <HeaderComponenet email={email} />
     <div className='item-container'>
      <PicturesFunc /> 
     </div>

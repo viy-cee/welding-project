@@ -8,6 +8,7 @@
   width: 100%;
   margin: 0 0 12px;
   break-inside: avoid;
+  position: relative;
 }
 
 .item-image {
@@ -21,4 +22,21 @@
   .item-container {
     columns: 2 150px;
   }
+}
+.delete{
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  border-radius: 5px;
+  padding: 6px 10px;
+  background-color: aquamarine;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 150ms ease;
+}
+
+.image-box:hover .delete,
+.image-box:focus-within .delete{
+  opacity: 1;
+  visibility: visible;
 }

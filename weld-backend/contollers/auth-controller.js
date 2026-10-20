@@ -72,7 +72,7 @@ const login = async (req,res)=>{
 
   res.status(200).json({
     success:true,
-    username:isRegisterd.username,
+    email:isRegisterd.email,
     data:token,
     role:isRegisterd.role
   })

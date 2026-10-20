@@ -1,27 +1,62 @@
 import './header.css'
 import profilepic from '../../images/grinder.jpg'
-export const HeaderComponenet = ({username,loginData})=>{
+import { Link } from 'react-router'
+import { useEffect, useRef, useState } from 'react'
+export const HeaderComponenet = ({email,loginData})=>{
+  const [logoutOpen, setLogoutOpen] = useState(false)
+  const logoutMenuRef = useRef(null)
   const role = localStorage.getItem('role')
   console.log(role)
+
+  useEffect(() => {
+    function closeOnOutsideClick(event) {
+      if (!logoutMenuRef.current?.contains(event.target)) {
+        setLogoutOpen(false)
+      }
+    }
+
+    document.addEventListener('click', closeOnOutsideClick)
+    return () => document.removeEventListener('click', closeOnOutsideClick)
+  }, [])
+
+  function logout(){
+    localStorage.removeItem('username')
+    localStorage.removeItem('token')
+  }
+  const token = localStorage.getItem('token')
   return(
     <div className="header-container">
       <div className="webname">
-        <div className="site-name"><a href='/' className='site-name'>Waiso</a></div>
+        <div className="site-name"><Link to='/' className='site-name'>Waiso</Link></div>
         <div className="name-info">welding work</div>
       </div>
       <div className="middle-section">
-        <a className='home-link' href='/'>Home</a>
-        <a className='about-link' href='/about'>About</a>
-        <a className='contact-link' href='/'>Contact</a>
+        <Link className='home-link' to='/'>Home</Link>
+        <Link className='about-link' to='/about'>About</Link>
+        <Link className='contact-link' to='/'>Contact</Link>
       </div>
       <div className="auth-section">
-        <div><img className='profile-pic' src={profilepic}/></div>
-        <div><a href='/login' className='login-header'>{username || 'Login'}</a></div>
-        {role ==='admin'
-        ?
-        <a href='/upload'>create</a>
-        :<div>logout</div>
-        }
+          {
+            token
+            ?<div className="logout-menu" ref={logoutMenuRef}>
+              <button
+                type="button"
+                className="logout-link"
+                aria-expanded={logoutOpen}
+                onClick={() => setLogoutOpen(open => !open)}
+              ><img className='profile-pic' src={profilepic}/></button>
+              <div className={`logout-tooltip${logoutOpen ? ' logout-tooltip-open' : ''}`}>
+                <div className="email-name">{email}</div>
+                 {role ==='admin' &&<Link to='/upload' onClick={() => setLogoutOpen(false)}>create</Link>}
+                <a href="/">
+                  <button className="logout-btn" onClick={logout}>logout</button>
+                </a>
+
+              </div>
+              </div>
+            :<Link to='/login' className='login-header'>Login
+            </Link>
+          }
       </div>
     </div>
   )
