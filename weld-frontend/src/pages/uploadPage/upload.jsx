@@ -3,6 +3,7 @@ import { useState } from "react"
 import { HeaderComponenet } from "../../components/header/header";
 import axios from 'axios'
 import { NavLink } from 'react-router';
+import { API_BASE_URL } from '../../config/api'
 export const FileUpload = ({ email }) => {
   const [file, setFile] = useState(null);
   const [category, setCategory] = useState('')
@@ -40,7 +41,7 @@ export const FileUpload = ({ email }) => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/api/v1/upload', formData, {
+      const response = await axios.post(`${API_BASE_URL}/api/v1/upload`, formData, {
         headers: {
           Authorization: `Bearer ${token}`
         },

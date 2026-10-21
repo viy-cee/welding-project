@@ -4,6 +4,7 @@ import './auth.css'
 import axios from 'axios'
 import { Link } from 'react-router'
 import { useNavigate } from "react-router"
+import { API_BASE_URL } from '../../config/api'
 
 
 export const LoginPage = ({
@@ -41,7 +42,7 @@ export const LoginPage = ({
   const sendLogin = async(e)=>{
     e.preventDefault()
     try {
-      const result = await axios.post('http://localhost:3000/auth/login',loginDetails)
+      const result = await axios.post(`${API_BASE_URL}/auth/login`,loginDetails)
       const login = result.data
 
       if (login.success !== true) {

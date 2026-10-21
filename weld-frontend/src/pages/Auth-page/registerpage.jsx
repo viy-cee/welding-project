@@ -4,6 +4,7 @@ import { HeaderComponenet } from "../../components/header/header"
 import './auth.css'
 import axios from "axios"
 import { Link } from "react-router"
+import { API_BASE_URL } from '../../config/api'
 export const RegisterPage = ({ setEmail }) => {
   const navigate = useNavigate()
   const [errorMessage, setErrorMessage] = useState('')
@@ -28,10 +29,10 @@ export const RegisterPage = ({ setEmail }) => {
     let accountCreated = false
 
     try {
-      const result = await axios.post('http://localhost:3000/auth/register', RegisterDetails)
+      const result = await axios.post(`${API_BASE_URL}/auth/register`, RegisterDetails)
       if (result.data.success) {
         accountCreated = true
-        const loginResult = await axios.post('http://localhost:3000/auth/login', RegisterDetails)
+        const loginResult = await axios.post(`${API_BASE_URL}/auth/login`, RegisterDetails)
         const login = loginResult.data
 
         if (!login.success) {

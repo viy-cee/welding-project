@@ -3,6 +3,7 @@ import './homePage.css'
 import { HeaderComponenet } from '../../components/header/header'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import axios from 'axios'
+import { API_BASE_URL } from '../../config/api'
 
 const PAGE_SIZE = 10
 
@@ -27,7 +28,7 @@ export const HomePage = ({ email }) => {
     const requestedPage = pageRef.current
 
     try {
-      const response = await axios.get('http://localhost:3000/api/v1/images', {
+      const response = await axios.get(`${API_BASE_URL}/api/v1/images`, {
         params: {
           page: requestedPage,
           limit: PAGE_SIZE,
@@ -80,7 +81,7 @@ export const HomePage = ({ email }) => {
       images.map((item) => {
         async function deleteImage(){
           try {
-            await axios.delete(`http://localhost:3000/api/v1/images/${item._id}`,{
+            await axios.delete(`${API_BASE_URL}/api/v1/images/${item._id}`,{
               headers:{
                 "Authorization": `Bearer ${localStorage.getItem('token')}`
               }
