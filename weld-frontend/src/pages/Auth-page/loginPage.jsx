@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { HeaderComponenet } from "../../components/header/header"
 import './auth.css'
 import axios from 'axios'
@@ -18,6 +18,15 @@ export const LoginPage = ({
     password:''
   })
   const [loginMessage,setLoginMessage] = useState('')
+  const loginMessageTimer = useRef(null)
+
+  function showLoginMessage(message) {
+    setLoginMessage(message)
+    window.clearTimeout(loginMessageTimer.current)
+    loginMessageTimer.current = window.setTimeout(() => setLoginMessage(''), 2000)
+  }
+
+  useEffect(() => () => window.clearTimeout(loginMessageTimer.current), [])
 
   function loginForm(event){
     const {name,value} = event.target
@@ -36,7 +45,7 @@ export const LoginPage = ({
       const login = result.data
 
       if (login.success !== true) {
-        setLoginMessage(login.message || 'Login failed. Please try again.')
+        showLoginMessage(login.message || 'Login failed. Please try again.')
         return
       }
 
@@ -48,7 +57,7 @@ export const LoginPage = ({
       navigate('/', { replace: true })
     } catch (error) {
       console.log(error)
-      setLoginMessage(error.response?.data?.message || 'Unable to log in. Please try again.')
+      showLoginMessage(error.response?.data?.message || 'Unable to log in. Please try again.')
     }
 
   }
@@ -76,7 +85,7 @@ export const LoginPage = ({
               onChange={loginForm}
               />
             </div>
-            {loginMessage && <p role="alert">{loginMessage}</p>}
+            {loginMessage && <p className="login-error" role="alert">{loginMessage}</p>}
             <div>don't have an account?<Link to="/register">register</Link></div>
             <button type="submit" className="login-button">login</button>
           </form>

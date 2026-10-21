@@ -6,11 +6,13 @@ import axios from 'axios'
 
 const PAGE_SIZE = 10
 
-export const HomePage = ({ email })=>{
+export const HomePage = ({ email }) => {
   const [images, setImages] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
   const [loadError, setLoadError] = useState('')
+  const [selectedFilter, setSelectedFilter] = useState('')
+  const [activeImageId, setActiveImageId] = useState(null)
   const pageRef = useRef(1)
   const loadingRef = useRef(false)
   const hasMoreRef = useRef(true)
@@ -29,6 +31,7 @@ export const HomePage = ({ email })=>{
         params: {
           page: requestedPage,
           limit: PAGE_SIZE,
+          category: selectedFilter || undefined,
           sortBy: 'category',
           sortOrder: 'asc'
         }
@@ -47,9 +50,13 @@ export const HomePage = ({ email })=>{
       loadingRef.current = false
       setIsLoading(false)
     }
-  }, [])
+  }, [selectedFilter])
 
   useEffect(() => {
+    setImages([])
+    pageRef.current = 1
+    hasMoreRef.current = true
+    setHasMore(true)
     loadNextPage()
   }, [loadNextPage])
 
@@ -66,47 +73,101 @@ export const HomePage = ({ email })=>{
   }, [hasMore, images.length, loadError, loadNextPage])
 
   const role = localStorage.getItem('role')
+  const isAdmin = role === 'admin' && Boolean(localStorage.getItem('token'))
 
-    const PicturesFunc = ()=>{
-      return(
-    images.map((item)=>{
-      return(
-        <div key={item._id} className='image-box'>
-        <img className="item-image" src={item.url} />
-        { role === 'admin'
-        ?
-        <button className="delete">delete</button>
-        :
-        <a
-          className="delete whatsapp-share"
-          href={`https://wa.me/?text=${encodeURIComponent(item.url)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >share</a>
+  const PicturesFunc = () => {
+    return (
+      images.map((item) => {
+        async function deleteImage(){
+          try {
+            await axios.delete(`http://localhost:3000/api/v1/images/${item._id}`,{
+              headers:{
+                "Authorization": `Bearer ${localStorage.getItem('token')}`
+              }
+            })
+            setImages((currentImages) => currentImages.filter((image) => image._id !== item._id))
+          } catch (error) {
+            console.error('Failed to delete image:', error)
+          }
         }
-        </div> 
-      )
-    })
-  )
+        const downloadUrl = item.url.includes('/upload/')
+          ? item.url.replace('/upload/', '/upload/fl_attachment/')
+          : item.url
+
+        return (
+          <div key={item._id} className='image-box'>
+            <img
+              className="item-image"
+              src={item.url}
+              role="button"
+              tabIndex={0}
+              aria-label={`Show actions for image ${item._id}`}
+              aria-pressed={activeImageId === item._id}
+              onClick={() => setActiveImageId((currentId) => currentId === item._id ? null : item._id)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  setActiveImageId((currentId) => currentId === item._id ? null : item._id)
+                }
+              }}
+            />
+            <div
+              className={`image-actions${activeImageId === item._id ? ' image-actions-visible' : ''}`}
+              onClick={(event) => event.stopPropagation()}
+            >
+              {isAdmin ? (
+                <button className="image-action delete-action" onClick={deleteImage}>delete</button>
+              ) : (
+                              <a
+                className="image-action download-action"
+                href={downloadUrl}
+                download
+              >download</a>
+              )}
+              <a
+                className="image-action download-action"
+                href={downloadUrl}
+                download
+              >download</a>
+            </div>
+          </div>
+        )
+      })
+    )
   }
-  return(
+
+  return (
     <>
-    <HeaderComponenet email={email} />
-    <div className='item-container'>
-     <PicturesFunc /> 
-    </div>
-    <div ref={sentinelRef} className='image-load-sentinel' aria-hidden='true' />
-    <div className='image-load-status' aria-live='polite'>
-      {isLoading && <p>Loading images...</p>}
-      {loadError && (
+      <HeaderComponenet email={email} />
+      <div className='filter-container'>
+        <div>Filter :</div>
         <div>
-          <p role='alert'>{loadError}</p>
-          <button type='button' onClick={loadNextPage}>Retry</button>
+          <label htmlFor='filter-windows'>windws</label>
+          <input id='filter-windows' type='checkbox' checked={selectedFilter === 'windows'} onChange={(event) => setSelectedFilter(event.target.checked ? 'windows' : '')} />
         </div>
-      )}
-      {!isLoading && !loadError && images.length === 0 && <p>No images found.</p>}
-      {!hasMore && images.length > 0 && <p>You have reached the end.</p>}
-    </div>
+        <div>
+          <label htmlFor='filter-doors'>doors</label>
+          <input id='filter-doors' type='checkbox' checked={selectedFilter === 'doors'} onChange={(event) => setSelectedFilter(event.target.checked ? 'doors' : '')} />
+        </div>
+        <div>
+          <label htmlFor='filter-gates'>gate</label>
+          <input id='filter-gates' type='checkbox' checked={selectedFilter === 'gates'} onChange={(event) => setSelectedFilter(event.target.checked ? 'gates' : '')} />
+        </div>
+      </div>
+      <div className='item-container'>
+        <PicturesFunc />
+      </div>
+      <div ref={sentinelRef} className='image-load-sentinel' aria-hidden='true' />
+      <div className='image-load-status' aria-live='polite'>
+        {isLoading && <p>Loading images...</p>}
+        {loadError && (
+          <div>
+            <p role='alert'>{loadError}</p>
+            <button type='button' onClick={loadNextPage}>Retry</button>
+          </div>
+        )}
+        {!isLoading && !loadError && images.length === 0 && <p>No images found.</p>}
+      </div>
     </>
   )
 }

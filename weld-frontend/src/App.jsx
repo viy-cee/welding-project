@@ -32,7 +32,7 @@ function App() {
       setLoginData={setLoginData}
       />} 
       />
-      <Route path="/register" element={<RegisterPage email={email} />} />
+      <Route path="/register" element={<RegisterPage email={email} setEmail={setEmail} />} />
       <Route path="*" element={<p>Page not found</p>} />
     </Routes>
   )

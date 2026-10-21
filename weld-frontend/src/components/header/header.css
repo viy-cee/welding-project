@@ -1,27 +1,36 @@
 .header-container{
-  background-color: azure;
+  background-color: rgb(156, 156, 156);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-left: 20px;
-  padding-right: 20px;
+  gap: 12px;
+  padding: 6px 20px;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+.webname{
+  display: flex;
+  align-items: center;
+  min-width: 0;
 }
 .middle-section{
-display: flex;
-width: 50%;
+  display: flex;
+  width: min(30%, 360px);
+  justify-content: space-between;
+  gap: 16px;
 }
 .site-name{
   font-weight: 1000;
-  font-size: 50px;
-  color: rgb(44, 20, 20);
+  font-size: clamp(30px, 4vw, 50px);
+  color: rgb(97, 30, 30);
   text-decoration: none;
 }
 .name-info{
   font-size: 20px;
-  font-weight: 500s;
+  font-weight: 500px;
 }
 .contact-link,.home-link,.about-link{
-  font-size: 20px;
+  font-size: clamp(16px, 2vw, 25px);
   text-decoration: none;
   color: rgb(150, 88, 88);
 }
@@ -97,3 +106,37 @@ width: 50%;
 }
 
 
+a{
+  text-decoration: none;
+}
+
+.logo-image{
+  width: clamp(52px, 6vw, 80px);
+  border-radius: 40px;
+  margin-left: -16px;
+}
+
+@media (max-width: 600px) {
+  .header-container {
+    flex-wrap: wrap;
+    padding: 6px 12px;
+  }
+
+  .middle-section {
+    order: 3;
+    width: 100%;
+    justify-content: space-around;
+    gap: 8px;
+    padding: 4px 0;
+  }
+
+  .contact-link,
+  .home-link,
+  .about-link {
+    font-size: 18px;
+  }
+
+  .name-info {
+    font-size: 15px;
+  }
+}

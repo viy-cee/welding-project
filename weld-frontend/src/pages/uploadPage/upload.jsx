@@ -5,6 +5,7 @@ import axios from 'axios'
 import { NavLink } from 'react-router';
 export const FileUpload = ({ email }) => {
   const [file, setFile] = useState(null);
+  const [category, setCategory] = useState('')
   const [uploading, setUploading] = useState(false)
   const [status, setStatus] = useState('')
   const [uploadProgress, setUploadProgress] = useState(0)
@@ -17,6 +18,10 @@ export const FileUpload = ({ email }) => {
       setStatus('please select a file first')
       return
     }
+    if (!category) {
+      setStatus('please select a category')
+      return
+    }
 
     setUploadProgress(0)
     setUploading(true)
@@ -25,6 +30,7 @@ export const FileUpload = ({ email }) => {
     const formData = new FormData();
     // The backend route uses multerUploadMiddleware.single('image').
     formData.append('image', file)
+    formData.append('category', category)
 
     const token = localStorage.getItem('token')
     if (!token) {
@@ -70,6 +76,15 @@ export const FileUpload = ({ email }) => {
       <div className='upload-container'>
         <div className='upload-info'>
           <input className="file-input" type="file" onChange={uplodFile} />
+          <div>
+            <label>Choose category</label>
+            <select required value={category} onChange={(event) => setCategory(event.target.value)}>
+            <option value="" disabled>Select category</option>
+            <option>windows</option>
+            <option>doors</option>
+            <option>gates</option>
+            </select>
+          </div>
           {file && (
             <div className='file-info-container'>
               <div>Name: {file.name}</div>

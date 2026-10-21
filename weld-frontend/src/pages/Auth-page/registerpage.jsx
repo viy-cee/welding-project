@@ -4,11 +4,10 @@ import { HeaderComponenet } from "../../components/header/header"
 import './auth.css'
 import axios from "axios"
 import { Link } from "react-router"
-export const RegisterPage = ({ username }) => {
+export const RegisterPage = ({ setEmail }) => {
   const navigate = useNavigate()
   const [errorMessage, setErrorMessage] = useState('')
   const [RegisterDetails,setRegisterDetails] = useState({
-    username:'',
     email:'',
     password:''
   })
@@ -26,33 +25,42 @@ export const RegisterPage = ({ username }) => {
   const sendForm = async(e)=>{
     e.preventDefault()
     setErrorMessage('')
+    let accountCreated = false
 
     try {
       const result = await axios.post('http://localhost:3000/auth/register', RegisterDetails)
       if (result.data.success) {
-        navigate('/login')
+        accountCreated = true
+        const loginResult = await axios.post('http://localhost:3000/auth/login', RegisterDetails)
+        const login = loginResult.data
+
+        if (!login.success) {
+          setErrorMessage(login.message || 'Account created, but automatic login failed. Please log in.')
+          return
+        }
+
+        localStorage.setItem('token', login.data)
+        localStorage.setItem('role', login.role)
+        localStorage.setItem('email', login.email)
+        setEmail(login.email)
+        navigate('/', { replace: true })
       } else {
         setErrorMessage(result.data.message || 'Registration failed. Please try again.')
       }
     } catch (error) {
-      setErrorMessage(error.response?.data?.message || 'Registration failed. Please try again.')
+      const fallbackMessage = accountCreated
+        ? 'Account created, but automatic login failed. Please log in.'
+        : 'Registration failed. Please try again.'
+      setErrorMessage(error.response?.data?.message || fallbackMessage)
     }
   }
   return (
     <>
-      <HeaderComponenet username={username} />
+      <HeaderComponenet />
       <div>
         <div className="login-container">
           <form onSubmit={sendForm} className="login-form">
-            <div className="input-container">
-              <label>username</label>
-              <input
-               type="text" 
-               placeholder="username" 
-               name="username"
-               onChange={registerUser}
-               />
-            </div>
+        
             <div className="input-container">
               <label>email</label>
               <input 

@@ -5,6 +5,12 @@ const uploadImage = async (req, res) => {
   try {
     const {category} = req.body
     console.log(category)
+    if(!category){
+      return res.status(400).json({
+        success:false,
+        message:'please provide category'        
+      })
+    }
   
     const uploadResult = await uploadHelper(req.file.path)
     console.log(uploadResult)
@@ -40,6 +46,8 @@ const getAllImages = async (req, res) => {
       ? Math.min(requestedLimit, 100)
       : 10
     const skip = (page - 1) * limit
+    const category = req.query.category
+    const filter = category ? { category } : {}
 
     const sortBy = req.query.sortBy || 'createdAt'
     const sortOrder = req.query.sortOrder === 'asc'? 1 : -1;
@@ -49,8 +57,8 @@ const getAllImages = async (req, res) => {
     console.log(sortBy)
 
     const [images, totalImages] = await Promise.all([
-      Image.find().sort(sortObj).skip(skip).limit(limit),
-      Image.countDocuments()
+      Image.find(filter).sort(sortObj).skip(skip).limit(limit),
+      Image.countDocuments(filter)
     ])
     res.status(200).json({
       success: true,

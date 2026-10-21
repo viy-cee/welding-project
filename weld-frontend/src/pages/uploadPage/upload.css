@@ -1,5 +1,6 @@
 .uploading-bar{
-  width: 400px;
+  width: 100%;
+  max-width: 400px;
   border-style:groove;
   border-radius: 10px;
   height: 9px;
@@ -15,10 +16,13 @@
 }
 .upload-container{
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  min-height: calc(100vh - 100px);
+  min-height: calc(100svh - 100px);
+  padding: 24px;
+  box-sizing: border-box;
 }
 .file-info-container{
   font-size: 20px;
@@ -29,12 +33,16 @@
 }
 .upload-info{
   display: grid;
-  box-shadow: 5px 5px 5px 5px;
-  grid-template-columns: 1.2fr 1fr 1fr;
-  height: 200px;
-  width: 800px;
+  box-shadow: 2px 2px 5px 5px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: min(900px, 100%);
+  min-height: 300px;
   align-items: center;
+  gap: 16px;
   background-color: transparent;
+  border-radius: 20px;
+  padding: 10px;
+  box-sizing: border-box;
 }
 .file-input {
   grid-column: 1 / -1;
@@ -73,4 +81,24 @@
 }
 .upload-status{
   margin-top: 10px;
+}
+
+@media (max-width: 600px) {
+  .upload-container {
+    min-height: calc(100vh - 130px);
+    min-height: calc(100svh - 130px);
+    padding: 20px 16px;
+  }
+
+  .upload-info {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+    gap: 18px;
+    padding: 20px;
+  }
+
+  .file-info-container {
+    font-size: 16px;
+    overflow-wrap: anywhere;
+  }
 }
