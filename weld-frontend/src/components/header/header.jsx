@@ -31,7 +31,7 @@ export const HeaderComponenet = ({email,loginData})=>{
         <div className="name-info">welding work</div>
       </div>
       <div className="middle-section">
-        <input className="search-bar" placeholder="search"/>
+        
       </div>
       <div className="auth-section">
           {

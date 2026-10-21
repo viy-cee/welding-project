@@ -43,6 +43,16 @@
   opacity: 1;
   visibility: visible;
 }
+
+.image-load-sentinel {
+  height: 1px;
+}
+
+.image-load-status {
+  min-height: 24px;
+  padding: 0 12px 12px;
+  text-align: center;
+}
 /* body{
   background-image: url('../../images/grinder.jpg');
   background-repeat: no-repeat;

@@ -13,6 +13,10 @@ const ImageSchema = new mongoose.Schema({
     type:mongoose.Types.ObjectId,
     ref: 'Auth',
     required:true
+  },
+  category:{
+    type:String,
+    required:true
   }
 },{timestamps:true})
 

@@ -3,10 +3,10 @@ const Auth = require('../model/Auth-Model')
 const jwt = require('jsonwebtoken')
 
 const register = async (req,res)=>{
-  const {username,email,password,role} = req.body
+  const {email,password,role} = req.body
 
   try {
-    const existingUser = await Auth.findOne({$or :[{username},{email}]})
+    const existingUser = await Auth.findOne({email})
     if(existingUser){
       return res.status(400).json({
         success:false,
@@ -16,7 +16,6 @@ const register = async (req,res)=>{
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password,salt)
     const result = await Auth.create({
-      username,
       email,
       password:hashedPassword,
       role:role?role:'user'
@@ -64,7 +63,6 @@ const login = async (req,res)=>{
 
 
   const token = await jwt.sign({
-    username: isRegisterd.username,
     email: isRegisterd.email,
     role:isRegisterd.role,
     userId:isRegisterd._id
@@ -86,7 +84,51 @@ const login = async (req,res)=>{
   }
 }
 
+const changePassword = async(req,res)=>{
+  try {
+    const {oldPassword,newPassword} = req.body
+
+    const userId = req.user.userId
+
+    const isExist = await Auth.findById(userId)
+    if(!isExist){
+     return res.status(404).json({
+        success:false,
+        message:'user not found'
+      })
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword,isExist.password)
+
+    if(!isMatch){
+     return res.status(400).json({
+      success:false,
+      message:'wrong password'
+     })
+    }
+    const salt = await bcrypt.genSalt(10)
+    const newHashedPassword = await bcrypt.hash(newPassword,salt)
+
+
+    isExist.password = newHashedPassword
+
+    await isExist.save()
+    res.status(200).json({
+      success:true,
+      message:'successfully changed password'
+    })
+
+  } catch (error) {
+        console.log(error);
+        res.status(500).json({
+      success: false,
+      message: 'Some error occured please try again'
+    })
+  }
+}
+
 module.exports = {
   register,
-  login
+  login,
+  changePassword
 }

@@ -1,12 +1,6 @@
 const mongoose = require('mongoose')
 
 const authSchema = new mongoose.Schema({
-  username:{
-    type:String,
-    required:[true,'please provide username'],
-    unique:true,
-    maxLength:20
-  },
   email:{
     type:String,
     required:[true,'please provide email'],
