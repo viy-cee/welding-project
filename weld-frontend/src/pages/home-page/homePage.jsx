@@ -125,11 +125,6 @@ export const HomePage = ({ email }) => {
                 download
               >download</a>
               )}
-              <a
-                className="image-action download-action"
-                href={downloadUrl}
-                download
-              >download</a>
             </div>
           </div>
         )
